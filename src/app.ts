@@ -17,8 +17,6 @@ app.use(
     limits: {
       fileSize: 1000000,
     },
-    useTempFiles: true,
-    tempFileDir: "/tmp/",
   })
 );
 
