@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { firebase } from "../firebase/firbase-config";
 import {
   getStorage,
@@ -44,15 +43,27 @@ export const uploadImage = async (
         switch (error.code) {
           case "storage/unauthorized":
             // User doesn't have permission to access the object
+            res.status(401).json({
+              status: "Fail",
+              message: "User doesn't have permission to access the object",
+            });
             break;
           case "storage/canceled":
             // User canceled the upload
+            res.status(499).json({
+              status: "Fail",
+              message: "User canceled the upload",
+            });
             break;
 
           // ...
 
           case "storage/unknown":
             // Unknown error occurred, inspect error.serverResponse
+            res.status(404).json({
+              status: "Fail",
+              message: error.serverResponse,
+            });
             break;
         }
       },
@@ -60,6 +71,11 @@ export const uploadImage = async (
         // Upload completed successfully, now we can get the download URL
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           console.log("File available at", downloadURL);
+          res.status(201).json({
+            status: "success",
+            url: `File available at ${downloadURL}`,
+            message: "Image upload successfully....",
+          });
         });
       }
     );
